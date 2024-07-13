@@ -48,20 +48,21 @@ button {
 }
 
 button.off {
-    background-color: #f00800; /* Red when inactive */
+    background-color: #f00800;
 }
 
 button.on {
-    background-color: #5cb85c; /* Green when active */
+    background-color: #5cb85c;
 }
 
 .status-text {
-    color: #f00800; /* Red when inactive */
+    width: 200px;
+    color: #d9534f;
     margin: 5px;
 }
 
 .status-text.on {
-    color: #4CAF50; /* Green when active */
+    color: #4CAF50;
 }
 
 .cost-text {
@@ -74,13 +75,6 @@ button.darker {
 }
 
 
-.status-text {
-    width: 200px; /* Fixed width */
-    color: #d9534f; /* Red when inactive */
-    margin: 5px;
-    right: 50px
-}
-
-.status-text.on {
-    color: #4CAF50; /* Green when active */
+#jumpscareGif {
+    display: none;
 }

@@ -1,62 +1,47 @@
-let money = 0; // Start money
+let money = 0;
 let timeLeft = 0;
-let upgradeableTime = 30; // Downgradable time
+let upgradeableTime = 30;
 let timerInterval;
-let time = 30; // Timer who runs down
-let costs = 10; // Costs for timer reduction
+let time = 30;
+let costs = 10;
 let level = 0;
 let Exp = 0;
 let autoHarvestEnabled = false;
-let autoHarvestInterval;
-let salary = 10; // Start salary
-let timered = -1; // Timer reduction
+let salary = 10;
+let timered = -1;
 
 document.addEventListener('DOMContentLoaded', function() {
-    // Select all buttons on the page
     const buttons = document.querySelectorAll('button');
     const clickSound = document.getElementById('clickSound');
 
-    // Set playback speed
-    clickSound.playbackRate = 1.0; // Normal speed
+    clickSound.playbackRate = 1.0;
 
-    // Add click event listener to each button
     buttons.forEach(button => {
         button.addEventListener('click', function() {
-            // Apply the darker class
             button.classList.add('darker');
-
-            // Remove the darker class after 200 milliseconds
             setTimeout(function() {
                 button.classList.remove('darker');
             }, 200);
 
-            // Play click sound with 2% cutoff and 1 millisecond delay
-            playSoundWithCutoffAndDelay(clickSound, 0.06, );
+            playSound(clickSound, 0.06);
         });
     });
 
-    // Initialization code for the game
-    document.getElementById("harvestToggle").addEventListener("click", function() {
-        toggleAutoHarvest();
-    });
-    document.getElementById("Harvest").addEventListener("click", function() {
-        startTimer();
-    });
-    document.getElementById("upgradeTimer").addEventListener("click", function() {
-        upgradeTimer();
-    });
+    document.getElementById("harvestToggle").addEventListener("click", toggleAutoHarvest);
+    document.getElementById("Harvest").addEventListener("click", startTimer);
+    document.getElementById("upgradeTimer").addEventListener("click", upgradeTimer);
+    document.getElementById("testJumpscare").addEventListener("click", Jumpscare);
+
     startGame();
 });
 
-function playSoundWithCutoffAndDelay(audioElement, cutoffPercentage, delay) {
+function playSound(audioElement, cutoffPercentage) {
     audioElement.addEventListener('loadedmetadata', function() {
         const cutoffTime = audioElement.duration * cutoffPercentage;
         audioElement.currentTime = cutoffTime;
-        setTimeout(() => {
-            audioElement.play();
-        }, delay);
+        audioElement.play();
     }, { once: true });
-    audioElement.load(); // Reload the audio element to ensure metadata is available
+    audioElement.load();
 }
 
 function updateTimer() {
@@ -83,7 +68,7 @@ function updateExp() {
 }
 
 function updateSalary() {
-    if (level % 5 === 0 && level !== 0) {  // Ensure salary increases are triggered correctly
+    if (level % 5 === 0 && level !== 0) {
         salary += 5;
     }
     document.getElementById("salary").textContent = salary;
@@ -93,14 +78,14 @@ function updateLevel() {
     let newLevel = Math.floor(Exp / 10);
     if (newLevel !== level) {
         level = newLevel;
-        updateSalary();  // Update salary when level changes
+        updateSalary();
     }
     document.getElementById("level").textContent = level;
 }
 
 function earnMoney() {
     money += salary;
-    Exp += 10; // Gain experience
+    Exp += 10;
     updateMoney();
     updateExp();
     updateLevel();
@@ -108,19 +93,23 @@ function earnMoney() {
 
 function upgradeTimer() {
     if (money >= costs) {
-        money -= costs;
-        time = Math.max(time - 1, 1); // Ensure time does not go below 1
-        upgradeableTime = time;
-        updateTimer();
-        updateMoney();
-        updateNowTime();
-        updateUpgradeCosts();
+        if (time === 1) {
+            endGame();
+        } else {
+            money -= costs;
+            time = Math.max(time - 1, 1);
+            upgradeableTime = time;
+            updateTimer();
+            updateMoney();
+            updateNowTime();
+            updateUpgradeCosts();
+        }
     }
 }
 
 function startTimer() {
-    if (!timerInterval) { // Ensure no duplicate intervals
-        timeLeft = time; // Reset timeLeft to the current time
+    if (!timerInterval) {
+        timeLeft = time;
         updateTimer();
         timerInterval = setInterval(function() {
             timeLeft--;
@@ -132,14 +121,14 @@ function startTimer() {
                 if (!autoHarvestEnabled) {
                     document.getElementById("Harvest").disabled = false;
                 } else {
-                    startTimer(); // Restart timer immediately if auto-harvest is enabled
+                    startTimer();
                 }
             }
         }, 1000);
     }
 }
 
-function toggleAutoHarvest() { // AutoHarvest function for HTML
+function toggleAutoHarvest() {
     autoHarvestEnabled = !autoHarvestEnabled;
     const toggleButton = document.getElementById('harvestToggle');
     const statusText = document.getElementById('harvestStatus');
@@ -151,10 +140,8 @@ function toggleAutoHarvest() { // AutoHarvest function for HTML
 
     if (autoHarvestEnabled) {
         if (!timerInterval) {
-            startTimer(); // Start timer immediately if auto-harvest is enabled and no timer is running
+            startTimer();
         }
-    } else {
-        clearInterval(autoHarvestInterval); // Stop auto-harvesting
     }
 }
 
@@ -174,10 +161,40 @@ function startGame() {
 }
 
 function endGame() {
-    alert("Game Over!");
-    clearInterval(timerInterval);
-    clearInterval(autoHarvestInterval);
-    timerInterval = null;
-    autoHarvestInterval = null;
-    startGame(); // Optionally reset the game
+    Jumpscare();
+    setTimeout(() => {
+        alert("Game Over!");
+        clearInterval(timerInterval);
+        timerInterval = null;
+        startGame();
+    }, 6000); // Delay reset and alert by 2 seconds to allow jumpscare to finish
 }
+
+
+function Jumpscare() {
+    const jumpscareGif = document.getElementById('jumpscareGif');
+    const jumpscareScream = document.getElementById('jumpscarescream');
+    // Display the GIF full screen
+    jumpscareGif.style.display = 'block';
+    jumpscareGif.style.position = 'fixed';
+    jumpscareGif.style.top = 0;
+    jumpscareGif.style.left = 0;
+    jumpscareGif.style.width = '100%';
+    jumpscareGif.style.height = '100%';
+    jumpscareGif.style.zIndex = 1000;
+
+    // Ensure sound is ready to play
+    jumpscareScream.volume = 1.0;
+    jumpscareScream.currentTime = 0; // Restart sound from beginning
+    jumpscareScream.play().catch(error => {
+        console.error('Error playing jumpscare sound:', error);
+    });
+
+    // Remove the GIF after 2 seconds
+    setTimeout(() => {
+        jumpscareGif.style.display = 'none';
+    }, 6000);
+}
+
+
+
