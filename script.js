@@ -13,6 +13,10 @@ let timered = -1;
 document.addEventListener('DOMContentLoaded', function() {
     const buttons = document.querySelectorAll('button');
     const clickSound = document.getElementById('clickSound');
+    const impressumLink = document.getElementById('impressumLink');
+    const impressumModal = document.getElementById('impressumModal');
+    const closeImpressum = document.getElementById('closeImpressum');
+    const emailPlaceholder = document.getElementById('emailPlaceholder');
 
     clickSound.playbackRate = 1.0;
 
@@ -26,6 +30,23 @@ document.addEventListener('DOMContentLoaded', function() {
             playSound(clickSound, 0.06);
         });
     });
+
+    impressumLink.addEventListener('click', function() {
+        impressumModal.style.display = 'flex';
+    });
+
+    closeImpressum.addEventListener('click', function() {
+        impressumModal.style.display = 'none';
+    });
+
+    window.addEventListener('click', function(event) {
+        if (event.target == impressumModal) {
+            impressumModal.style.display = 'none';
+        }
+    });
+
+    const encodedEmail = "info@faschingsgilde.de".split('').map(char => '&#' + char.charCodeAt(0) + ';').join('');
+    emailPlaceholder.innerHTML = `<a href="mailto:${encodedEmail}">${encodedEmail}</a>`;
 
     document.getElementById("harvestToggle").addEventListener("click", toggleAutoHarvest);
     document.getElementById("Harvest").addEventListener("click", startTimer);
@@ -167,9 +188,8 @@ function endGame() {
         clearInterval(timerInterval);
         timerInterval = null;
         startGame();
-    }, 6000); // Delay reset and alert by 2 seconds to allow jumpscare to finish
+    }, 6000); // Delay reset and alert by 6 seconds to allow jumpscare to finish
 }
-
 
 function Jumpscare() {
     const jumpscareGif = document.getElementById('jumpscareGif');
@@ -190,11 +210,8 @@ function Jumpscare() {
         console.error('Error playing jumpscare sound:', error);
     });
 
-    // Remove the GIF after 2 seconds
+    // Remove the GIF after 6 seconds
     setTimeout(() => {
         jumpscareGif.style.display = 'none';
     }, 6000);
 }
-
-
-

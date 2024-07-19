@@ -1,0 +1,16 @@
+{
+  "name": "MoneyFields-electron",
+  "version": "1.0.0",
+  "description": "MoneyFields game with jumpscare feature",
+  "main": "main.js",
+  "scripts": {
+    "start": "npx electron ."
+  },
+  "devDependencies": {
+    "electron": "^21.0.0"
+  },
+  "dependencies": {
+    "@capacitor/cli": "^6.1.1",
+    "@capacitor/core": "^6.1.1"
+  }
+}
